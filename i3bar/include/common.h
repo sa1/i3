@@ -10,7 +10,6 @@
 #define COMMON_H_
 
 typedef struct rect_t rect;
-typedef int bool;
 
 struct ev_loop* main_loop;
 char            *statusline;
@@ -22,6 +21,8 @@ struct rect_t {
     int w;
     int h;
 };
+
+#include <stdbool.h>
 
 #include "queue.h"
 #include "child.h"
