@@ -23,6 +23,8 @@ int workspace_output_cb(zion_op_t *p, const char *key, size_t key_len, int type,
     char *output_name = strndup(val->s, p->val_len);
     walk->output = get_output_by_name(output_name);
     FREE(output_name);
+
+    TAILQ_INSERT_TAIL(walk->output->workspaces, walk, tailq);
     return 1;
 }
 
