@@ -19,7 +19,7 @@
 #include "common.h"
 
 int workspace_output_cb(zion_op_t *p, const char *key, size_t key_len, int type, const zion_json_val_t *val) {
-    i3_ws *walk = (i3_ws *)p->data;
+    i3_ws *walk = (i3_ws *)p->target;
     char *output_name = strndup(val->s, p->val_len);
     walk->output = get_output_by_name(output_name);
     FREE(output_name);
@@ -29,13 +29,31 @@ int workspace_output_cb(zion_op_t *p, const char *key, size_t key_len, int type,
 }
 
 int workspace_name_cb(zion_op_t *p, const char *key, size_t key_len, int type, const zion_json_val_t *val) {
-    i3_ws *walk = (i3_ws *)p->data;
+    i3_ws *walk = (i3_ws *)p->target;
     walk->name = strndup(val->s, p->val_len);
     int ucs2_len;
     xcb_char2b_t *ucs2_name = (xcb_char2b_t *)convert_utf8_to_ucs2(walk->name, &ucs2_len);
     walk->ucs2_name = ucs2_name;
     walk->name_glyphs = ucs2_len;
     walk->name_width = predict_text_extents(ucs2_name, ucs2_len);
+    return 1;
+}
+
+int arr_cb(zion_ap_t *p, int type, const zion_json_val_t *val) {
+    i3_ws *walk = calloc(1, sizeof(i3_ws));
+    if (walk == NULL) {
+        ELOG("calloc() failed: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+    walk->num = -1;
+    zion_op_t *op = p->data;
+    op->target = (void *)walk;
+    op = op->data;
+    op->target = calloc(1, sizeof(rect));
+    if (op->target == NULL) {
+        ELOG("calloc() failed: %s\n", strerror(errno));
+        exit(EXIT_FAILURE);
+    }
     return 1;
 }
 
@@ -63,12 +81,15 @@ void parse_workspaces_json(char *json) {
         zion_op_add_offset(&ws_parser, "urgent", 6, ZION_JSON_BOOL, offsetof(i3_ws, urgent));
         zion_op_add_op(&ws_parser, "rect", 4, &rect_parser);
         zion_op_add_cb(&ws_parser, "output", 6, ZION_JSON_STRING, &workspace_output_cb);
-
+        /* Kind of uglyish workaround 'til we get awesome macromagic in zion */
+        ws_parser.data = &rect_parser;
         zion_ap_init(&arr_parser);
         zion_ap_add_op(&arr_parser, &ws_parser);
     }
     free_workspaces();
-    const char *input;
+    zion_ap_add_cb(&arr_parser, ZION_JSON_OBJECT, &arr_cb);
+    arr_parser.data = &ws_parser;
+    const char *input = json;
     zion_ap_start(&arr_parser, &input, strlen(json));
 }
 
