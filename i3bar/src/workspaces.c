@@ -49,7 +49,7 @@ int arr_cb(zion_ap_t *p, int type, const zion_json_val_t *val) {
     zion_op_t *op = p->data;
     op->target = (void *)walk;
     op = op->data;
-    op->target = calloc(1, sizeof(rect));
+    op->target = &walk->rect;
     if (op->target == NULL) {
         ELOG("calloc() failed: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
