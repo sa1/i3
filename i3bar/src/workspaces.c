@@ -68,10 +68,10 @@ void parse_workspaces_json(char *json) {
     static bool init = true;
     if (init) {
         zion_op_init(&rect_parser);
-        zion_op_add_offset(&ws_parser, "x", 1, ZION_JSON_INT, offsetof(rect, x));
-        zion_op_add_offset(&ws_parser, "y", 1, ZION_JSON_INT, offsetof(rect, y));
-        zion_op_add_offset(&ws_parser, "width", 5, ZION_JSON_INT, offsetof(rect, w));
-        zion_op_add_offset(&ws_parser, "height", 6, ZION_JSON_INT, offsetof(rect, h));
+        zion_op_add_offset(&rect_parser, "x", 1, ZION_JSON_INT, offsetof(rect, x));
+        zion_op_add_offset(&rect_parser, "y", 1, ZION_JSON_INT, offsetof(rect, y));
+        zion_op_add_offset(&rect_parser, "width", 5, ZION_JSON_INT, offsetof(rect, w));
+        zion_op_add_offset(&rect_parser, "height", 6, ZION_JSON_INT, offsetof(rect, h));
 
         zion_op_init(&ws_parser);
         zion_op_add_offset(&ws_parser, "num", 3, ZION_JSON_INT, offsetof(i3_ws, num));
