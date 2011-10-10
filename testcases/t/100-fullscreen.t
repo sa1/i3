@@ -27,7 +27,8 @@ for my $o (@outputs) {
 }
 
 BEGIN {
-    use_ok('X11::XCB::Window');
+    use_ok('X11::XCB::Connection');
+    use_ok('X11::XCB::Connection::Rect');
 }
 
 my $x = X11::XCB::Connection->new;
@@ -36,7 +37,7 @@ my $x = X11::XCB::Connection->new;
 # map a window, then fullscreen it
 ##################################
 
-my $original_rect = X11::XCB::Rect->new(x => 0, y => 0, width => 30, height => 30);
+my $original_rect = X11::XCB::Connection::Rect->new(x => 0, y => 0, width => 30, height => 30);
 
 my $window = $x->root->create_child(
     class => WINDOW_CLASS_INPUT_OUTPUT,
@@ -45,7 +46,7 @@ my $window = $x->root->create_child(
     event_mask => [ 'structure_notify' ],
 );
 
-isa_ok($window, 'X11::XCB::Window');
+isa_ok($window, 'X11::XCB::Connection::Window');
 
 is_deeply($window->rect, $original_rect, "rect unmodified before mapping");
 
@@ -88,7 +89,7 @@ $window->unmap;
 # map in a second
 cmd 'open';
 
-$original_rect = X11::XCB::Rect->new(x => 0, y => 0, width => 30, height => 30);
+$original_rect = X11::XCB::Connection::Rect->new(x => 0, y => 0, width => 30, height => 30);
 $window = $x->root->create_child(
     class => WINDOW_CLASS_INPUT_OUTPUT,
     rect => $original_rect,
@@ -119,7 +120,7 @@ ok(abs($wrect->{height} - $orect->{height}) < $threshold, 'height coordinate ful
 # test if setting two windows in fullscreen mode at the same time does not work
 ###############################################################################
 
-$original_rect = X11::XCB::Rect->new(x => 0, y => 0, width => 30, height => 30);
+$original_rect = X11::XCB::Connection::Rect->new(x => 0, y => 0, width => 30, height => 30);
 my $swindow = $x->root->create_child(
     class => WINDOW_CLASS_INPUT_OUTPUT,
     rect => $original_rect,

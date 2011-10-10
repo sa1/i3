@@ -5,12 +5,13 @@ use i3test;
 use X11::XCB qw(:all);
 
 BEGIN {
-    use_ok('X11::XCB::Window');
+    use_ok('X11::XCB::Connection');
+    use_ok('X11::XCB::Connection::Rect');
 }
 
 my $x = X11::XCB::Connection->new;
 
-my $original_rect = X11::XCB::Rect->new(x => 0, y => 0, width => 30, height => 30);
+my $original_rect = X11::XCB::Connection::Rect->new(x => 0, y => 0, width => 30, height => 30);
 
 my $window = $x->root->create_child(
     class => WINDOW_CLASS_INPUT_OUTPUT,
@@ -19,14 +20,14 @@ my $window = $x->root->create_child(
     background_color => '#C0C0C0',
 );
 
-isa_ok($window, 'X11::XCB::Window');
+isa_ok($window, 'X11::XCB::Connection::Window');
 
 is_deeply($window->rect, $original_rect, "rect unmodified before mapping");
 
 $window->map;
 
 my $new_rect = $window->rect;
-isa_ok($new_rect, 'X11::XCB::Rect');
+isa_ok($new_rect, 'X11::XCB::Connection::Rect');
 
 is_deeply($new_rect, $original_rect, "window untouched");
 

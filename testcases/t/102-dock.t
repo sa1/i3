@@ -56,7 +56,7 @@ is($docknode->{rect}->{height}, 30, 'dock node has unchanged height');
 # check that re-configuring the height works
 #####################################################################
 
-$window->rect(X11::XCB::Rect->new(x => 0, y => 0, width => 50, height => 40));
+$window->rect(X11::XCB::Connection::Rect->new(x => 0, y => 0, width => 50, height => 40));
 
 sync_with_i3 $x;
 

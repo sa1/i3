@@ -3,9 +3,8 @@ package i3test;
 
 use File::Temp qw(tmpnam tempfile tempdir);
 use Test::Builder;
-use X11::XCB::Rect;
-use X11::XCB::Window;
 use X11::XCB qw(:all);
+use X11::XCB::Connection;
 use AnyEvent::I3;
 use EV;
 use List::Util qw(first);
@@ -315,7 +314,7 @@ sub sync_with_i3 {
     if (!defined($_sync_window)) {
         $_sync_window = $x->root->create_child(
             class => WINDOW_CLASS_INPUT_OUTPUT,
-            rect => X11::XCB::Rect->new(x => -15, y => -15, width => 10, height => 10 ),
+            rect => [ -15, -15, 10, 10 ],
             override_redirect => 1,
             background_color => '#ff0000',
             event_mask => [ 'structure_notify' ],
@@ -399,9 +398,8 @@ sub get_socket_path {
 
     my $x = X11::XCB::Connection->new;
     my $atom = $x->atom(name => 'I3_SOCKET_PATH');
-    my $cookie = $x->get_property(0, $x->get_root_window(), $atom->id, GET_PROPERTY_TYPE_ANY, 0, 256);
-    my $reply = $x->get_property_reply($cookie->{sequence});
-    my $socketpath = $reply->{value};
+    my $property = $x->get_property(0, $x->get_root_window(), $atom->id, GET_PROPERTY_TYPE_ANY, 0, 256);
+    my $socketpath = $property->value;
     $_cached_socket_path = $socketpath;
     return $socketpath;
 }

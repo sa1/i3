@@ -5,7 +5,7 @@ use i3test;
 use X11::XCB qw(:all);
 
 BEGIN {
-    use_ok('X11::XCB::Window');
+    use_ok('X11::XCB::Connection');
 }
 
 my $x = X11::XCB::Connection->new;
@@ -20,7 +20,7 @@ my $window = $x->root->create_child(
     event_mask => [ 'structure_notify' ],
 );
 
-isa_ok($window, 'X11::XCB::Window');
+isa_ok($window, 'X11::XCB::Connection::Window');
 
 $window->map;
 
@@ -44,7 +44,7 @@ $window = $x->root->create_child(
     event_mask => [ 'structure_notify' ],
 );
 
-isa_ok($window, 'X11::XCB::Window');
+isa_ok($window, 'X11::XCB::Connection::Window');
 
 $window->map;
 
@@ -75,7 +75,7 @@ $window = $x->root->create_child(
     event_mask => [ 'structure_notify' ],
 );
 
-isa_ok($window, 'X11::XCB::Window');
+isa_ok($window, 'X11::XCB::Connection::Window');
 
 $window->map;
 

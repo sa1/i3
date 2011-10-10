@@ -9,7 +9,7 @@ use Time::HiRes qw(sleep);
 use i3test;
 
 BEGIN {
-    use_ok('X11::XCB::Window');
+    use_ok('X11::XCB::Connection');
 }
 
 my $x = X11::XCB::Connection->new;
